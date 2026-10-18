@@ -46,14 +46,39 @@ def simulate(cases: list[Case], agents: int) -> Result:
                   max(waits, default=0.0), total_service, completion)
 
 
-def generate_cases(count: int, seed: int = 42) -> list[Case]:
-    """Generate synthetic arrivals with mean gap 2 and mean service time 5."""
+def _rate_from_mean(value: float, name: str) -> float:
+    """Convert a positive finite mean in minutes to an exponential rate."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"{name} must be a positive finite number of minutes")
+    try:
+        valid = math.isfinite(value) and value > 0
+        rate = 1 / value if valid else 0.0
+    except OverflowError:
+        valid, rate = False, 0.0
+    if not valid or not math.isfinite(rate) or rate <= 0:
+        raise ValueError(f"{name} must have a positive finite reciprocal rate")
+    return rate
+
+
+def generate_cases(count: int, seed: int = 42, *,
+                   mean_interarrival: float = 2.0,
+                   mean_service: float = 5.0) -> list[Case]:
+    """Generate independent exponential gaps/services; means are in minutes.
+
+    Defaults preserve the original seeded workload. Means must be positive and
+    finite with representable reciprocal rates, even when count is zero.
+    """
     if isinstance(count, bool) or not isinstance(count, int) or count < 0:
         raise ValueError("count must be a nonnegative integer")
+    arrival_rate = _rate_from_mean(mean_interarrival, "mean_interarrival")
+    service_rate = _rate_from_mean(mean_service, "mean_service")
     rng = Random(seed)
     arrival = 0.0
     cases = []
     for _ in range(count):
-        arrival += rng.expovariate(1 / 2)
-        cases.append(Case(arrival, rng.expovariate(1 / 5)))
+        arrival += rng.expovariate(arrival_rate)
+        duration = rng.expovariate(service_rate)
+        if not math.isfinite(arrival) or not math.isfinite(duration):
+            raise ValueError("generated times overflowed; reduce workload means or count")
+        cases.append(Case(arrival, duration))
     return cases

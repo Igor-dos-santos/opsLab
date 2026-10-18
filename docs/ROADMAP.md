@@ -1,7 +1,8 @@
 # Release scope and learning gates
 
 1. Queue mechanics and hand-calculated tests (initial increment).
-2. Configurable workload generation and validation.
+2. Configurable workload generation and validation (implemented 2026-10-18;
+   follow-up validation of boundary cases and scenario experiments remains).
 3. CSV export and operational metrics with explicit units.
 4. Compare staffing scenarios using the same generated workload.
 5. Forecasting baseline, chronological evaluation, and leakage checks.
