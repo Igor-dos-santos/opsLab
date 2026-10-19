@@ -93,6 +93,15 @@ class WorkloadCliTests(unittest.TestCase):
         self.assertIn("--mean-service", process.stdout)
         self.assertIn("minutes", process.stdout)
 
+    def test_simulation_overflow_is_a_usage_error(self):
+        process = self.run_cli("--cases", "100", "--agents", "1", "--seed", "42",
+                               "--mean-service", "1e307")
+        self.assertEqual(process.returncode, 2)
+        self.assertEqual(process.stdout, "")
+        self.assertIn("simulation", process.stderr)
+        self.assertIn("overflowed", process.stderr)
+        self.assertNotIn("Traceback", process.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

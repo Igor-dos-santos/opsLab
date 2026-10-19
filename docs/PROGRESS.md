@@ -1,5 +1,43 @@
 # Progress
 
+## 2026-10-19: Reject simulation arithmetic overflow
+
+Implemented with AI assistance, preserving the existing public attribution.
+Base: [84008a7b63a8bf91b0483a8943a9af1c9eeea99f](https://github.com/Igor-dos-santos/opsLab/commit/84008a7b63a8bf91b0483a8943a9af1c9eeea99f).
+This increment's commit is discoverable in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Scope: reject non-finite completion times, service totals and waiting totals
+instead of returning infinity. No comparison engine, AI, dependency or deployment
+was added. Normal queue behavior and seeded results remain unchanged.
+
+Evidence from the project root:
+- Baseline `python -m unittest discover -s tests -v`: 17 tests passed.
+- Before the fix, `python -m unittest discover -s tests -p test_boundaries.py -v`:
+  six new tests ran; three failed because overflow did not raise ValueError.
+  Reproductions isolate completion overflow (`Case(1e308, 1e308)`), service-total
+  overflow (two `Case(0, 1e308)` with two agents), and wait-total overflow
+  (`Case(0, 1e308)` followed by two zero-duration cases, one agent).
+- After the fix, `python -m unittest discover -s tests -v`: 24 tests passed.
+  Seven new tests include the three overflow regressions, large representable
+  results, zero durations/idle gaps, unchanged input order with a hand-calculated
+  two-agent result, and CLI overflow exit 2 without JSON output or traceback.
+- `python -m opslab --cases 100 --agents 3 --seed 42`: exit 0; mean wait
+  0.9513027012401756, maximum wait 6.975970587585238, total service
+  431.609365564085, final completion 236.49216502423639 minutes, unchanged.
+
+Concepts: input versus derived-value validation, floating-point overflow,
+red/green regression tests, queue invariants and CLI error propagation.
+Policy: reject any overflowing aggregate, even if a different averaging algorithm
+could represent the final mean. No arbitrary precision or numeric-type expansion.
+These checks do not address floating-point rounding or resource exhaustion.
+
+Validation is local, not CI evidence. No hosted demo is verified. Source and docs:
+[repository](https://github.com/Igor-dos-santos/opsLab). No external blocker found.
+Next bounded task: document and test staffing comparisons on the same generated
+workload, preserving service workload and reporting synthetic assumptions.
+CSV export, forecasts, AI/rework, uncertainty experiments and interface remain.
+
 ## 2026-10-18: Configurable workload means
 
 Implemented with AI assistance, following the existing public attribution.

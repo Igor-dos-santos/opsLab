@@ -21,6 +21,11 @@ results. The exponential rate is the reciprocal of the mean: a 4-minute mean
 gap uses rate 0.25 per minute. Means must be positive finite numbers with finite
 positive reciprocal rates, including for an empty workload. Invalid CLI values
 produce an argument error (exit 2). Generated non-finite times are rejected.
+Simulation also rejects overflow of completion times, total service, or total
+waiting time with ValueError (CLI exit 2). Finite inputs alone cannot guarantee
+finite sums. This conservative policy rejects an overflowing total wait even
+when dividing it by the case count could yield a representable mean; arbitrary
+precision arithmetic and overflow-resistant averaging are not implemented.
 
 Python callers can use keyword-only options:
 ```python

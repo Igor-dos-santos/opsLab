@@ -23,7 +23,7 @@ class Result:
 
 
 def simulate(cases: list[Case], agents: int) -> Result:
-    """Assign each arriving case to the earliest available agent."""
+    """Assign cases to agents; reject non-finite completion or aggregate times."""
     if isinstance(agents, bool) or not isinstance(agents, int) or agents < 1:
         raise ValueError("agents must be a positive integer")
     for case in cases:
@@ -38,11 +38,18 @@ def simulate(cases: list[Case], agents: int) -> Result:
         available = heapq.heappop(availability)
         start = max(available, case.arrival)
         finish = start + case.duration
+        if not math.isfinite(finish):
+            raise ValueError("simulation completion overflowed; reduce case times")
         waits.append(start - case.arrival)
         total_service += case.duration
+        if not math.isfinite(total_service):
+            raise ValueError("simulation total service overflowed; reduce workload")
         completion = max(completion, finish)
         heapq.heappush(availability, finish)
-    return Result(len(cases), sum(waits) / len(waits) if waits else 0.0,
+    total_wait = sum(waits)
+    if not math.isfinite(total_wait):
+        raise ValueError("simulation total wait overflowed; reduce workload")
+    return Result(len(cases), total_wait / len(waits) if waits else 0.0,
                   max(waits, default=0.0), total_service, completion)
 
 

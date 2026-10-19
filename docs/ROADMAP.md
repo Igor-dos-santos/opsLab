@@ -2,7 +2,8 @@
 
 1. Queue mechanics and hand-calculated tests (initial increment).
 2. Configurable workload generation and validation (implemented 2026-10-18;
-   follow-up validation of boundary cases and scenario experiments remains).
+   simulation overflow guards and boundary/invariant tests added 2026-10-19;
+   same-workload scenario experiments remain).
 3. CSV export and operational metrics with explicit units.
 4. Compare staffing scenarios using the same generated workload.
 5. Forecasting baseline, chronological evaluation, and leakage checks.
