@@ -1,5 +1,43 @@
 # Progress
 
+## 2026-10-20: Same-workload staffing comparison API
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [553e0c3efc29a72d585fcbfc685f09585920dccd](https://github.com/Igor-dos-santos/opsLab/commit/553e0c3efc29a72d585fcbfc685f09585920dccd).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `opslab.scenarios.compare_staffing` and frozen StaffingResult records. The
+API reuses the identical caller-supplied case list for every agent count, preserves
+count order and input lists, validates all counts before running, and propagates
+simulation failures without returning partial comparison rows. No new CLI mode,
+cost model, randomness, dependency, AI or deployment was added.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 24 tests passed.
+- Test-first discovery of test_scenarios.py failed with ModuleNotFoundError before
+  the new scenarios module existed. This was missing implementation, not a
+  numerical regression. After implementation, the full command passed 31 tests.
+- Seven added tests cover hand-calculated staffing outcomes and unchanged input,
+  identical case-list identity across runs, seeded repeatability/direct-result
+  equivalence and service conservation, invalid counts rejected before simulation,
+  empty workloads, invalid cases and late-scenario overflow propagation.
+- Ran the Python example in docs/STAFFING_COMPARISON.md, generating 100 cases with
+  seed 42 once. Mean waits for 2/3/4 agents: 11.12260704571623,
+  0.9513027012401756, 0.20221891703524947 minutes. Each total service:
+  431.609365564085 minutes. Full metrics and interpretation are in that document.
+- `python -m opslab --cases 100 --agents 3 --seed 42`: exit 0 with unchanged
+  default mean wait 0.9513027012401756 and completion 236.49216502423639 minutes.
+
+Concepts: controlled experiments, separation of workload generation and scenarios,
+structured results, validation-before-work, failure propagation and invariants.
+No external blocker found. Local tests are not CI evidence; no hosted demo verified.
+Only synthetic data and sanitized technical documentation were added.
+Next bounded task: CSV export of comparison results with explicit units and tests.
+Repeated paired trials, CLI comparison integration, forecasts, AI/rework, costs,
+uncertainty and interface remain later milestones. No project release or learner
+understanding is inferred from this implementation.
+
 ## 2026-10-19: Reject simulation arithmetic overflow
 
 Implemented with AI assistance, preserving the existing public attribution.

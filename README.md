@@ -37,7 +37,18 @@ result = simulate(cases, agents=3)
 
 These are distribution expectations, not exact sample averages. Reuse the same
 case list when comparing staffing; changing both demand and staffing confounds
-the comparison. No staffing-comparison command has been added yet.
+the comparison. The Python API now supports controlled staffing comparisons:
+```python
+from opslab.scenarios import compare_staffing
+
+for row in compare_staffing(cases, [2, 3, 4]):
+    print(row.agents, row.result.mean_wait, row.result.total_service_minutes)
+```
+Counts must be a nonempty list of distinct positive integers (not booleans).
+Results preserve count order; all scenarios use the identical case list and
+neither input is modified. Any simulation error aborts the call rather than
+returning partial results. No staffing-comparison CLI flag has been added yet.
+See [the reproducible experiment](docs/STAFFING_COMPARISON.md) for results and limits.
 
 ## How it works
 A min-heap stores agent availability. Cases are processed in arrival order. Each

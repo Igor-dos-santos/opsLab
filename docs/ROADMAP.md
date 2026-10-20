@@ -3,9 +3,10 @@
 1. Queue mechanics and hand-calculated tests (initial increment).
 2. Configurable workload generation and validation (implemented 2026-10-18;
    simulation overflow guards and boundary/invariant tests added 2026-10-19;
-   same-workload scenario experiments remain).
+   same-workload comparison API and experiment added 2026-10-20).
 3. CSV export and operational metrics with explicit units.
-4. Compare staffing scenarios using the same generated workload.
+4. Compare staffing scenarios using the same generated workload (Python API and
+   single-seed example implemented; CLI integration and repeated trials remain).
 5. Forecasting baseline, chronological evaluation, and leakage checks.
 6. AI routing, error/rework assumptions, human-review capacity.
 7. Repeated experiments and uncertainty intervals.
