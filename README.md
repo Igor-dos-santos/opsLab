@@ -4,8 +4,8 @@ A learning-oriented simulator for the operational cost of human and AI work.
 
 ## Current status
 Current increment: a reproducible human-only queue simulation, configurable workload
-means, command-line interface, and tests. No AI model, forecast, web app, cloud
-deployment, or production claims yet.
+means, controlled staffing comparisons, CSV serialization, command-line interface,
+and tests. No AI model, forecast, web app, cloud deployment, or production claims yet.
 All generated cases are synthetic. Initial parameters are illustrative, not calibrated.
 
 ## Run (Python 3.10+; no third-party dependencies)
@@ -50,6 +50,22 @@ neither input is modified. Any simulation error aborts the call rather than
 returning partial results. No staffing-comparison CLI flag has been added yet.
 See [the reproducible experiment](docs/STAFFING_COMPARISON.md) for results and limits.
 
+Comparison results can be serialized with a fixed, unit-bearing CSV schema:
+```python
+from opslab.export import staffing_results_to_csv
+
+rows = compare_staffing(cases, [2, 3, 4])
+csv_text = staffing_results_to_csv(rows)
+with open("staffing.csv", "w", encoding="utf-8", newline="") as output:
+    output.write(csv_text)
+```
+The columns are `agents`, `cases`, `mean_wait_minutes`,
+`maximum_wait_minutes`, `total_service_minutes`, and
+`final_completion_minutes`. Row order and full Python numeric representations are
+preserved, and even an empty result set includes the header. Output uses LF line
+endings for cross-platform reproducibility. The serializer holds the complete CSV
+in memory and has no CLI option yet. See [CSV export](docs/CSV_EXPORT.md).
+
 ## How it works
 A min-heap stores agent availability. Cases are processed in arrival order. Each
 case starts when both it and its assigned agent are available. Waiting time is
@@ -58,8 +74,8 @@ agent count. All cases finish; there is no abandonment or shift boundary yet.
 
 ## Planned investigation
 Does AI automation still reduce cost after errors, rework, and human review?
-Next: CSV export, scenario comparisons, additional data
-validation, forecasting baselines, AI routing/rework, and an interactive view.
+Next: scenario CLI integration, repeated paired trials, additional data validation,
+forecasting baselines, AI routing/rework, and an interactive view.
 
 ## Limitations
 Independent exponential arrivals and service times do not represent a validated

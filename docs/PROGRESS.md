@@ -1,5 +1,42 @@
 # Progress
 
+## 2026-10-21: Unit-bearing CSV serialization
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [b43e78c7c55cb490ea6df183ec4140017e3f46e7](https://github.com/Igor-dos-santos/opsLab/commit/b43e78c7c55cb490ea6df183ec4140017e3f46e7).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `opslab.export.staffing_results_to_csv`, a standard-library CSV serializer
+for staffing comparison records. Its six fixed columns distinguish counts from
+minute-based metrics, preserve scenario order and numeric representations, always
+include a header, and use LF line endings. The serializer has no external writes,
+does not modify results or workloads, and introduces no dependency or CLI change.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 31 tests passed.
+- Test-first discovery of `test_export.py` failed with `ModuleNotFoundError` before
+  `opslab.export` existed. After implementation, five focused tests passed and the
+  complete suite passed 36 tests.
+- Exported the existing 100-case, seed-42 comparison for 2/3/4 agents. The CSV
+  preserved mean waits 11.12260704571623, 0.9513027012401756 and
+  0.20221891703524947 minutes, with total service 431.609365564085 minutes in every
+  row. This confirms serialization of the controlled example, not model accuracy.
+- `python -m opslab --cases 100 --agents 3 --seed 42`: exit 0 with unchanged mean
+  wait 0.9513027012401756 and final completion 236.49216502423639 minutes.
+- `git diff --check`: passed before publication.
+
+Concepts: stable data contracts, explicit units, deterministic serialization,
+separation of computation from persistence, invariants and test-first development.
+Only numeric simulator fields are exported; future text fields need spreadsheet
+formula-injection analysis. Output is held in memory, no CLI CSV mode exists, and
+local tests are not CI evidence. No release or hosted demo is claimed. Only synthetic
+data and sanitized documentation were added. No learner understanding is inferred.
+
+Next bounded task: add an explicit CLI comparison mode that emits the same CSV schema
+without mixing human-readable and machine-readable output. Repeated paired trials,
+forecasting, AI/rework, costs, uncertainty and an interface remain later milestones.
+
 ## 2026-10-20: Same-workload staffing comparison API
 
 Implemented with AI assistance, preserving existing attribution.
