@@ -27,6 +27,19 @@ with open("staffing.csv", "w", encoding="utf-8", newline="") as output:
     output.write(csv_text)
 ```
 
+The command line exposes the same controlled path and writes CSV to standard output:
+
+```sh
+python -m opslab --cases 100 --seed 42 --compare-agents 2 3 4
+python -m opslab --cases 100 --seed 42 --compare-agents 2 3 4 > staffing.csv
+```
+
+`--compare-agents N [N ...]` is mutually exclusive with `--agents`. The workload
+options apply to both modes. Comparison counts keep their requested order and must
+be distinct positive integers. Invalid counts, invalid workload parameters, and
+simulation failures produce a usage error on standard error, exit 2, and no partial
+CSV on standard output. The original single-scenario mode continues to emit JSON.
+
 The seed-42 example begins:
 
 ```csv
@@ -49,8 +62,9 @@ agents,cases,mean_wait_minutes,maximum_wait_minutes,total_service_minutes,final_
   opening untrusted CSV data in spreadsheet software.
 - The complete CSV is held in memory. A streaming writer may be preferable for large
   experiments, but current comparisons are intentionally small.
-- There is no CLI CSV mode or file-path policy yet. Callers choose whether and where
-  to persist the returned text, so the serializer itself performs no external writes.
+- The CLI writes CSV to standard output rather than accepting a file path. Shell
+  redirection lets the caller choose the destination and overwrite policy, while the
+  application remains free of filesystem writes.
 
 This export is evidence from one synthetic model, not a staffing recommendation,
 uncertainty estimate, cost calculation, or production benchmark.

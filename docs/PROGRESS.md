@@ -1,5 +1,48 @@
 # Progress
 
+## 2026-10-22: Comparison CSV command-line mode
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [bc1319c9ba011d2ae0fd4d2838a5648c13ea9d25](https://github.com/Igor-dos-santos/opsLab/commit/bc1319c9ba011d2ae0fd4d2838a5648c13ea9d25).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `--compare-agents N [N ...]` to the existing CLI. Comparison mode generates
+one workload, reuses it for every requested staffing count, and writes only the
+existing unit-bearing CSV schema to standard output. It is mutually exclusive with
+the single-scenario `--agents` JSON mode. Invalid counts, workload errors and
+simulation failures exit 2 through argparse without partial CSV or tracebacks.
+There is no file-path or overwrite policy; callers can use shell redirection.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 36 tests passed.
+- Before implementation, five focused CLI tests ran and four failed because
+  `--compare-agents` was unrecognized. The invalid-count test initially passed for
+  the wrong reason because it accepted any usage error; its assertions were tightened
+  to require the domain messages `positive integers` or `unique`.
+- After implementation, all six focused CLI tests passed and the complete suite
+  passed 42 tests. They cover exact CSV and requested order with custom workload
+  means, mutually exclusive modes, invalid counts without partial output, workload
+  and simulation failure propagation, and help text.
+- `python -m opslab --cases 100 --agents 3 --seed 42`: exit 0 with the unchanged
+  JSON mean wait 0.9513027012401756 and completion 236.49216502423639 minutes.
+- `python -m opslab --cases 100 --seed 42 --compare-agents 2 3 4`: exit 0 with
+  CSV mean waits 11.12260704571623, 0.9513027012401756 and 0.20221891703524947
+  minutes. Total service remained 431.609365564085 minutes in every row.
+- `python -m compileall -q opslab tests` and `git diff --check`: passed before
+  publication.
+
+Concepts: mutually exclusive CLI modes, stdout versus stderr contracts, exit codes,
+machine-readable output, same-workload experimental control and regression tests.
+The command holds the workload, scenario results and CSV string in memory, and there
+are no explicit resource caps. Local tests are not CI evidence. No release or hosted
+demo is claimed. Only synthetic data and sanitized documentation were added. No
+learner understanding is inferred.
+
+Next bounded task: add raw repeated paired trials that record seed and staffing count
+without yet claiming uncertainty or optimal staffing. Forecasting, AI/rework, costs,
+uncertainty summaries and an interface remain later milestones.
+
 ## 2026-10-21: Unit-bearing CSV serialization
 
 Implemented with AI assistance, preserving existing attribution.

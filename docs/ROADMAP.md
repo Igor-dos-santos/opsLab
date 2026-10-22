@@ -5,9 +5,9 @@
    simulation overflow guards and boundary/invariant tests added 2026-10-19;
    same-workload comparison API and experiment added 2026-10-20).
 3. CSV export and operational metrics with explicit units (Python serializer and
-   fixed schema implemented 2026-10-21; CLI integration remains).
+   fixed schema implemented 2026-10-21; CLI integration added 2026-10-22).
 4. Compare staffing scenarios using the same generated workload (Python API and
-   single-seed example implemented; CLI integration and repeated trials remain).
+   single-seed example implemented; CSV CLI added; repeated trials remain).
 5. Forecasting baseline, chronological evaluation, and leakage checks.
 6. AI routing, error/rework assumptions, human-review capacity.
 7. Repeated experiments and uncertainty intervals.
