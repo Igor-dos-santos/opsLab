@@ -7,10 +7,12 @@
 3. CSV export and operational metrics with explicit units (Python serializer and
    fixed schema implemented 2026-10-21; CLI integration added 2026-10-22).
 4. Compare staffing scenarios using the same generated workload (Python API and
-   single-seed example implemented; CSV CLI added; repeated trials remain).
+   single-seed example implemented; CSV CLI added; raw repeated paired-trial API
+   added 2026-10-23; multi-trial serialization and summaries remain).
 5. Forecasting baseline, chronological evaluation, and leakage checks.
 6. AI routing, error/rework assumptions, human-review capacity.
-7. Repeated experiments and uncertainty intervals.
+7. Repeated experiments and uncertainty intervals (raw seed-by-staffing trial rows
+   implemented; aggregation, interval method and interpretation remain).
 8. Interface, reproducible demo, benchmark, and limitations.
 
 Start simply. Add FastAPI/PostgreSQL/TypeScript only when needed by an accepted task.

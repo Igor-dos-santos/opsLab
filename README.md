@@ -4,9 +4,10 @@ A learning-oriented simulator for the operational cost of human and AI work.
 
 ## Current status
 Current increment: a reproducible human-only queue simulation, configurable workload
-means, controlled staffing comparisons, CSV serialization, command-line interface,
-and tests. No AI model, forecast, web app, cloud deployment, or production claims yet.
-All generated cases are synthetic. Initial parameters are illustrative, not calibrated.
+means, controlled staffing comparisons, raw repeated paired trials, CSV serialization,
+command-line interface, and tests. No AI model, forecast, web app, cloud deployment,
+or production claims yet. All generated cases are synthetic. Initial parameters are
+illustrative, not calibrated.
 
 ## Run (Python 3.10+; no third-party dependencies)
 ```sh
@@ -53,6 +54,21 @@ and emits CSV only. It is mutually exclusive with the single-scenario `--agents`
 option; invalid comparisons exit 2 without partial CSV or a traceback.
 See [the reproducible experiment](docs/STAFFING_COMPARISON.md) for results and limits.
 
+Python callers can repeat the controlled comparison across explicit seeds:
+```python
+from opslab.scenarios import run_paired_trials
+
+rows = run_paired_trials([40, 41, 42], [2, 3, 4], case_count=100)
+for row in rows:
+    print(row.seed, row.agents, row.result.mean_wait)
+```
+The function generates one workload per seed, applies every requested staffing count
+to that workload, and records a raw row with the seed and agent count. Seeds and
+agent counts are unique nonempty integer lists, booleans excluded. Order is seed-first,
+then agent-count order. The function returns no partial list if a later trial fails.
+It does not aggregate results or estimate uncertainty. See
+[raw paired trials](docs/PAIRED_TRIALS.md).
+
 Comparison results can be serialized with a fixed, unit-bearing CSV schema:
 ```python
 from opslab.export import staffing_results_to_csv
@@ -77,13 +93,14 @@ agent count. All cases finish; there is no abandonment or shift boundary yet.
 
 ## Planned investigation
 Does AI automation still reduce cost after errors, rework, and human review?
-Next: repeated paired trials, additional data validation, forecasting baselines,
-AI routing/rework, and an interactive view.
+Next: paired-trial CSV serialization, uncertainty summaries, additional data
+validation, forecasting baselines, AI routing/rework, and an interactive view.
 
 ## Limitations
 Independent exponential arrivals and service times do not represent a validated
 real operation. This version omits breaks, language skills, quality, and costs.
-Seeded repetition gives reproducibility, not statistical confidence.
+Raw repeated seeds improve experimental coverage but do not by themselves provide
+statistical confidence, calibrated uncertainty, or external validity.
 
 ## Development
 Owned and directed by Igor, developed with AI assistance as an educational portfolio.

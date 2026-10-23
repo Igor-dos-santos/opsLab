@@ -1,5 +1,44 @@
 # Progress
 
+## 2026-10-23: Raw repeated paired trials
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [c1144cc7f15a780179f889b493f73bf72942fd3b](https://github.com/Igor-dos-santos/opsLab/commit/c1144cc7f15a780179f889b493f73bf72942fd3b).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `run_paired_trials` and frozen `TrialResult` records. The Python API accepts
+explicit unique seeds and staffing counts, generates one workload per seed, reuses
+that workload across every staffing count, and returns raw rows ordered by seed then
+staffing count. Every row records both identifiers. No aggregation, CSV/CLI mode,
+uncertainty estimate, optimization, cost model or AI behavior was added.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 42 tests passed.
+- Before implementation, focused discovery of `test_trials.py` failed with
+  `ImportError` because `run_paired_trials` did not exist.
+- After implementation, all six focused tests passed and the complete suite passed
+  48 tests. Coverage includes seed and staffing order, equivalence to direct
+  simulation, one workload generation per seed, unchanged inputs, validation before
+  generation, and propagation of a late-trial failure without a partial return.
+- A three-seed, three-staffing example produced nine raw rows. Within each seed,
+  total service was conserved across 2/3/4 agents: 461.1749923638263 minutes for
+  seed 40, 574.9463819546643 for seed 41, and 431.609365564085 for seed 42.
+- `python -m compileall -q opslab tests` and `git diff --check`: passed before
+  publication.
+
+Concepts: paired experimental design, raw observations versus summaries, explicit
+provenance, deterministic seeds, nested ordering, validation-before-work, immutable
+records and failure atomicity at the return boundary. Results are stored in memory
+and the API has no CSV or CLI mode. Seed choice is not real-world sampling, and raw
+repetition alone supplies no confidence interval or staffing recommendation. Local
+tests are not CI evidence. No release or hosted demo is claimed. Only synthetic data
+and sanitized documentation were added. No learner understanding is inferred.
+
+Next bounded task: add deterministic CSV serialization for raw trial rows with seed
+and agent columns, without aggregating or claiming uncertainty. Statistical summaries,
+forecasting, AI/rework, costs and an interface remain later milestones.
+
 ## 2026-10-22: Comparison CSV command-line mode
 
 Implemented with AI assistance, preserving existing attribution.
