@@ -69,6 +69,20 @@ then agent-count order. The function returns no partial list if a later trial fa
 It does not aggregate results or estimate uncertainty. See
 [raw paired trials](docs/PAIRED_TRIALS.md).
 
+Raw trial rows can be serialized with their seed provenance and explicit units:
+```python
+from opslab.export import trial_results_to_csv
+
+csv_text = trial_results_to_csv(rows)
+with open("paired_trials.csv", "w", encoding="utf-8", newline="") as output:
+    output.write(csv_text)
+```
+The seven columns are `seed`, `agents`, `cases`, `mean_wait_minutes`,
+`maximum_wait_minutes`, `total_service_minutes`, and
+`final_completion_minutes`. Serialization preserves raw row order and numeric
+representations, uses LF line endings, and includes the header for empty input.
+It performs no aggregation or external write and has no CLI mode yet.
+
 Comparison results can be serialized with a fixed, unit-bearing CSV schema:
 ```python
 from opslab.export import staffing_results_to_csv
@@ -93,8 +107,8 @@ agent count. All cases finish; there is no abandonment or shift boundary yet.
 
 ## Planned investigation
 Does AI automation still reduce cost after errors, rework, and human review?
-Next: paired-trial CSV serialization, uncertainty summaries, additional data
-validation, forecasting baselines, AI routing/rework, and an interactive view.
+Next: paired-trial CLI integration, uncertainty summaries, additional data validation,
+forecasting baselines, AI routing/rework, and an interactive view.
 
 ## Limitations
 Independent exponential arrivals and service times do not represent a validated

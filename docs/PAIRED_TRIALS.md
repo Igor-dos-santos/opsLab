@@ -28,6 +28,28 @@ Verified output from that example:
 | 42 | 3 | 0.9513027012401756 | 431.609365564085 |
 | 42 | 4 | 0.20221891703524947 | 431.609365564085 |
 
+## CSV serialization
+
+Raw rows can be serialized without losing their seed and staffing provenance:
+
+```python
+from opslab.export import trial_results_to_csv
+
+csv_text = trial_results_to_csv(rows)
+with open("paired_trials.csv", "w", encoding="utf-8", newline="") as output:
+    output.write(csv_text)
+```
+
+The fixed schema is:
+
+```text
+seed,agents,cases,mean_wait_minutes,maximum_wait_minutes,total_service_minutes,final_completion_minutes
+```
+
+The serializer preserves raw row order and Python numeric representations, uses LF
+line endings on every platform, and emits the header even for empty input. It holds
+the complete CSV string in memory, performs no aggregation, and does not write files.
+
 ## Contract
 
 - `seeds` and `agent_counts` are nonempty lists of unique integers; booleans are
@@ -38,7 +60,8 @@ Verified output from that example:
 - All staffing counts are validated before any workload is generated.
 - A generation or simulation failure raises `ValueError`; the caller receives no
   partial result list.
-- The API holds every raw result in memory and currently has no CLI or CSV mode.
+- The API and serializer hold raw results and the complete CSV string in memory.
+  There is no repeated-trial CLI mode yet.
 
 ## Interpretation and limits
 

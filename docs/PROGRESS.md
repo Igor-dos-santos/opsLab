@@ -1,5 +1,43 @@
 # Progress
 
+## 2026-10-24: Raw paired-trial CSV serialization
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [61437f8ee5d76a952539a36896b70fe3ce3724e0](https://github.com/Igor-dos-santos/opsLab/commit/61437f8ee5d76a952539a36896b70fe3ce3724e0).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `trial_results_to_csv` and a fixed seven-column schema containing `seed`,
+`agents`, `cases`, and four explicitly minute-based metrics. Serialization preserves
+the raw seed-then-agent row order and Python numeric representations, always includes
+the header, uses LF line endings, does not modify inputs, and performs no external
+write or aggregation. No repeated-trial CLI mode or statistical summary was added.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 48 tests passed.
+- Before implementation, focused discovery of `test_trial_export.py` failed with
+  `ImportError` because the raw-trial header and serializer did not exist.
+- After implementation, all five focused tests passed and the complete suite passed
+  53 tests. Coverage includes exact seed/unit schema and values, seed-then-agent
+  order, full result values, empty input, LF endings and unchanged trial rows.
+- A two-seed, two-staffing, five-case example produced four deterministic CSV rows.
+  Seed 40 retained total service 22.67806530162165 minutes across 2/3 agents; seed
+  41 retained 26.140916818204612 minutes.
+- `python -m compileall -q opslab tests` and `git diff --check`: passed before
+  publication.
+
+Concepts: stable schemas, explicit units, provenance-preserving serialization,
+deterministic output, separation of computation from presentation, raw observations
+versus summaries, and regression testing. The API and serializer hold results and the
+complete CSV in memory. Numeric-only fields avoid current spreadsheet formula input,
+but future text fields require formula-injection analysis. Local tests are not CI
+evidence. No release or hosted demo is claimed. Only synthetic data and sanitized
+documentation were added. No learner understanding is inferred.
+
+Next bounded task: add an explicit repeated-trial CLI mode that emits this schema
+without mixing outputs or returning partial CSV. Statistical summaries, forecasting,
+AI/rework, costs, uncertainty and an interface remain later milestones.
+
 ## 2026-10-23: Raw repeated paired trials
 
 Implemented with AI assistance, preserving existing attribution.

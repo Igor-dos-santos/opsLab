@@ -68,3 +68,28 @@ agents,cases,mean_wait_minutes,maximum_wait_minutes,total_service_minutes,final_
 
 This export is evidence from one synthetic model, not a staffing recommendation,
 uncertainty estimate, cost calculation, or production benchmark.
+
+## Raw paired-trial CSV
+
+Repeated paired trials use a separate seven-column schema so every observation keeps
+its seed provenance:
+
+```python
+from opslab.export import trial_results_to_csv
+from opslab.scenarios import run_paired_trials
+
+rows = run_paired_trials([40, 41], [2, 3], case_count=5)
+csv_text = trial_results_to_csv(rows)
+```
+
+```csv
+seed,agents,cases,mean_wait_minutes,maximum_wait_minutes,total_service_minutes,final_completion_minutes
+40,2,5,0.9182388876103434,3.64436787635948,22.67806530162165,16.185193651000027
+40,3,5,0.0,0.0,22.67806530162165,15.23836708930779
+41,2,5,1.656579807732431,4.24739550262702,26.140916818204612,15.619765177146832
+41,3,5,0.0,0.0,26.140916818204612,13.579863941284975
+```
+
+The raw-trial serializer has the same deterministic line-ending, order-preservation,
+numeric-representation and no-external-write policies as the single-workload
+serializer. It does not aggregate trials, compute uncertainty, or expose a CLI mode.
