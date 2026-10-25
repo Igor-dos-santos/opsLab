@@ -92,4 +92,16 @@ seed,agents,cases,mean_wait_minutes,maximum_wait_minutes,total_service_minutes,f
 
 The raw-trial serializer has the same deterministic line-ending, order-preservation,
 numeric-representation and no-external-write policies as the single-workload
-serializer. It does not aggregate trials, compute uncertainty, or expose a CLI mode.
+serializer. The same path is available from the command line:
+
+```sh
+python -m opslab --cases 100 --trial-seeds 40 41 42 --trial-agents 2 3 4
+python -m opslab --cases 100 --trial-seeds 40 41 42 --trial-agents 2 3 4 > paired_trials.csv
+```
+
+Both trial options are required together. Trial mode is mutually exclusive with the
+single-scenario and one-workload comparison modes, and it rejects `--seed` rather
+than silently ignoring it. Inputs are fully validated and every trial completes before
+the CSV is written to standard output. Failures produce exit 2 and an explanation on
+standard error, with no partial CSV or traceback. The mode does not aggregate trials
+or compute uncertainty.

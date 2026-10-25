@@ -1,5 +1,47 @@
 # Progress
 
+## 2026-10-25: Atomic repeated-trial CSV command
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [1fbe3cd459c36767d6c9c1b154b1548ebb0ceb3e](https://github.com/Igor-dos-santos/opsLab/commit/1fbe3cd459c36767d6c9c1b154b1548ebb0ceb3e).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `--trial-seeds N [N ...]` and the paired `--trial-agents N [N ...]` option.
+The mode calls the existing paired-trial engine and seven-column serializer, preserves
+seed-then-agent order, applies the existing workload means and case count, and writes
+only CSV to standard output. Both options are required together. Trial mode is
+mutually exclusive with the JSON and one-workload comparison modes, and explicitly
+rejects the single-workload `--seed` option instead of ignoring it. All trials and
+serialization finish before output is written, preserving failure atomicity.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 53 tests passed.
+- Before implementation, `python -m unittest discover -s tests -p test_trial_cli.py -v`
+  ran seven new tests and failed because the trial flags and CLI import did not exist.
+- After implementation, all seven focused tests passed and the complete suite passed
+  60 tests. Coverage includes exact CSV and requested order with custom workload
+  means, mode exclusivity, paired-option requirements, rejection of ambiguous
+  `--seed`, list validation, late-failure atomicity and help text.
+- `python -m opslab --cases 5 --trial-seeds 40 41 --trial-agents 2 3` exited 0
+  with one header and four deterministic rows. Within each seed, total service was
+  conserved across both staffing counts: 22.67806530162165 minutes for seed 40 and
+  26.140916818204612 minutes for seed 41.
+- `python -m opslab --cases 100 --agents 3 --seed 42` retained the existing JSON
+  mean wait 0.9513027012401756 and completion 236.49216502423639 minutes.
+- `python -m compileall -q opslab tests` passed.
+
+Concepts: command-line mode design, paired arguments, ambiguity rejection, reuse of
+domain APIs, stdout/stderr contracts, failure atomicity, deterministic serialization
+and regression testing. Trial results and the complete CSV remain in memory with no
+explicit resource cap. The command provides raw synthetic observations, not an
+uncertainty estimate, optimized staffing decision or production benchmark. No CI,
+release or hosted demo is claimed. No learner understanding is inferred.
+
+Next bounded task: design and add descriptive per-agent summaries across paired seeds
+with explicit interpretation limits, without presenting them as confidence intervals
+or staffing recommendations. Forecasting, AI/rework, costs and an interface remain.
+
 ## 2026-10-24: Raw paired-trial CSV serialization
 
 Implemented with AI assistance, preserving existing attribution.

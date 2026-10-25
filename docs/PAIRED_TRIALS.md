@@ -40,6 +40,12 @@ with open("paired_trials.csv", "w", encoding="utf-8", newline="") as output:
     output.write(csv_text)
 ```
 
+The command line exposes the same seed-first, staffing-second result order:
+
+```sh
+python -m opslab --cases 100 --trial-seeds 40 41 42 --trial-agents 2 3 4
+```
+
 The fixed schema is:
 
 ```text
@@ -60,8 +66,10 @@ the complete CSV string in memory, performs no aggregation, and does not write f
 - All staffing counts are validated before any workload is generated.
 - A generation or simulation failure raises `ValueError`; the caller receives no
   partial result list.
-- The API and serializer hold raw results and the complete CSV string in memory.
-  There is no repeated-trial CLI mode yet.
+- The API, CLI and serializer hold raw results and the complete CSV string in memory.
+- CLI trial options must be supplied together. Trial mode rejects the single-workload
+  `--seed` option and is mutually exclusive with JSON and one-workload comparison
+  modes. Failures use exit 2 and standard error without writing partial CSV.
 
 ## Interpretation and limits
 

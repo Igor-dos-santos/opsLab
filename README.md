@@ -14,6 +14,7 @@ illustrative, not calibrated.
 python -m opslab --cases 100 --agents 3 --seed 42
 python -m opslab --cases 100 --agents 3 --seed 42 --mean-interarrival 4 --mean-service 7
 python -m opslab --cases 100 --seed 42 --compare-agents 2 3 4
+python -m opslab --cases 100 --trial-seeds 40 41 42 --trial-agents 2 3 4
 python -m unittest discover -s tests -v
 ```
 
@@ -81,7 +82,11 @@ The seven columns are `seed`, `agents`, `cases`, `mean_wait_minutes`,
 `maximum_wait_minutes`, `total_service_minutes`, and
 `final_completion_minutes`. Serialization preserves raw row order and numeric
 representations, uses LF line endings, and includes the header for empty input.
-It performs no aggregation or external write and has no CLI mode yet.
+It performs no aggregation or external write. The command-line mode requires both
+`--trial-seeds` and `--trial-agents`; it is mutually exclusive with `--agents` and
+`--compare-agents`, and the single-workload `--seed` option is rejected in trial
+mode. All trials finish before the complete CSV is written, so validation, workload,
+or simulation failures exit 2 without partial standard output or a traceback.
 
 Comparison results can be serialized with a fixed, unit-bearing CSV schema:
 ```python
@@ -107,8 +112,8 @@ agent count. All cases finish; there is no abandonment or shift boundary yet.
 
 ## Planned investigation
 Does AI automation still reduce cost after errors, rework, and human review?
-Next: paired-trial CLI integration, uncertainty summaries, additional data validation,
-forecasting baselines, AI routing/rework, and an interactive view.
+Next: descriptive paired-trial summaries, uncertainty-method design, additional data
+validation, forecasting baselines, AI routing/rework, and an interactive view.
 
 ## Limitations
 Independent exponential arrivals and service times do not represent a validated

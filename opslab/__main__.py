@@ -2,8 +2,8 @@ import argparse
 from dataclasses import asdict
 import json
 
-from .export import staffing_results_to_csv
-from .scenarios import compare_staffing
+from .export import staffing_results_to_csv, trial_results_to_csv
+from .scenarios import compare_staffing, run_paired_trials
 from .simulation import generate_cases, simulate
 
 
@@ -15,21 +15,44 @@ def main():
                       help="agents for one JSON simulation (default: 3)")
     mode.add_argument("--compare-agents", type=int, nargs="+", metavar="N",
                       help="compare agent counts on the same workload and emit CSV")
-    parser.add_argument("--seed", type=int, default=42)
+    mode.add_argument("--trial-seeds", type=int, nargs="+", metavar="N",
+                      help="run paired workloads for these seeds and emit CSV")
+    parser.add_argument("--trial-agents", type=int, nargs="+", metavar="N",
+                        help="agent counts for --trial-seeds paired comparisons")
+    parser.add_argument("--seed", type=int)
     parser.add_argument("--mean-interarrival", type=float, default=2.0,
                         help="mean gap between arrivals in minutes (default: 2)")
     parser.add_argument("--mean-service", type=float, default=5.0,
                         help="mean service duration in minutes (default: 5)")
     args = parser.parse_args()
+    if args.trial_seeds is None and args.trial_agents is not None:
+        parser.error("--trial-agents requires --trial-seeds")
+    if args.trial_seeds is not None and args.trial_agents is None:
+        parser.error("--trial-seeds requires --trial-agents")
+    if args.trial_seeds is not None and args.seed is not None:
+        parser.error("--seed cannot be used with --trial-seeds")
     try:
-        cases = generate_cases(args.cases, args.seed,
-                               mean_interarrival=args.mean_interarrival,
-                               mean_service=args.mean_service)
-        if args.compare_agents is None:
-            output = json.dumps(asdict(simulate(cases, args.agents)), indent=2) + "\n"
+        if args.trial_seeds is not None:
+            rows = run_paired_trials(
+                args.trial_seeds,
+                args.trial_agents,
+                case_count=args.cases,
+                mean_interarrival=args.mean_interarrival,
+                mean_service=args.mean_service,
+            )
+            output = trial_results_to_csv(rows)
         else:
-            rows = compare_staffing(cases, args.compare_agents)
-            output = staffing_results_to_csv(rows)
+            cases = generate_cases(
+                args.cases,
+                42 if args.seed is None else args.seed,
+                mean_interarrival=args.mean_interarrival,
+                mean_service=args.mean_service,
+            )
+            if args.compare_agents is None:
+                output = json.dumps(asdict(simulate(cases, args.agents)), indent=2) + "\n"
+            else:
+                rows = compare_staffing(cases, args.compare_agents)
+                output = staffing_results_to_csv(rows)
     except ValueError as error:
         parser.error(str(error))
     print(output, end="")
