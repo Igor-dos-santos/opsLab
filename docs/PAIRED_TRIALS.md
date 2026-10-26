@@ -56,6 +56,33 @@ The serializer preserves raw row order and Python numeric representations, uses 
 line endings on every platform, and emits the header even for empty input. It holds
 the complete CSV string in memory, performs no aggregation, and does not write files.
 
+## Descriptive wait summaries
+
+The Python API can describe the distribution of per-trial mean waits for each
+staffing count without discarding the raw rows:
+
+```python
+from opslab.scenarios import summarize_mean_wait
+
+summaries = summarize_mean_wait(rows)
+for summary in summaries:
+    print(summary.agents, summary.trials,
+          summary.average_mean_wait_minutes,
+          summary.minimum_mean_wait_minutes,
+          summary.maximum_mean_wait_minutes)
+```
+
+The arithmetic average gives equal weight to each seed's mean wait. The input must
+form a complete seed-by-agent matrix, contain no duplicate seed-agent pair, and use
+one case count throughout. Summary order follows the first occurrence of each agent
+count. Invalid identifiers, non-finite or negative mean waits, and malformed records
+are rejected. Large finite values are divided by the trial count before summation so
+a representable average is not lost to an overflowing intermediate total.
+
+Observed minima and maxima describe only the supplied synthetic seeds. They are not
+confidence bounds, prediction intervals, hypothesis tests, or evidence of optimal
+staffing. The function adds no CSV or CLI summary mode and does not modify raw rows.
+
 ## Contract
 
 - `seeds` and `agent_counts` are nonempty lists of unique integers; booleans are
@@ -66,6 +93,8 @@ the complete CSV string in memory, performs no aggregation, and does not write f
 - All staffing counts are validated before any workload is generated.
 - A generation or simulation failure raises `ValueError`; the caller receives no
   partial result list.
+- Descriptive summaries require exactly one row for every seed and staffing count,
+  with the same number of cases in every row.
 - The API, CLI and serializer hold raw results and the complete CSV string in memory.
 - CLI trial options must be supplied together. Trial mode rejects the single-workload
   `--seed` option and is mutually exclusive with JSON and one-workload comparison

@@ -9,12 +9,13 @@
 4. Compare staffing scenarios using the same generated workload (Python API and
    single-seed example implemented; CSV CLI added; raw repeated paired-trial API
    added 2026-10-23; raw-trial CSV serialization added 2026-10-24; atomic repeated-
-   trial CLI integration added 2026-10-25; summaries remain).
+   trial CLI integration added 2026-10-25; validated descriptive wait summaries
+   added 2026-10-26; summary serialization remains).
 5. Forecasting baseline, chronological evaluation, and leakage checks.
 6. AI routing, error/rework assumptions, human-review capacity.
 7. Repeated experiments and uncertainty intervals (raw seed-by-staffing trial rows
-   plus deterministic API and CLI CSV serialization implemented; aggregation,
-   interval method and interpretation remain).
+   plus deterministic API and CLI CSV serialization and descriptive wait aggregation
+   implemented; interval method and interpretation remain).
 8. Interface, reproducible demo, benchmark, and limitations.
 
 Start simply. Add FastAPI/PostgreSQL/TypeScript only when needed by an accepted task.

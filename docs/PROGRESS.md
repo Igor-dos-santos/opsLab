@@ -1,5 +1,47 @@
 # Progress
 
+## 2026-10-26: Validated descriptive wait summaries
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [302c8e56078cd025b9206261d0ffb752de5bad52](https://github.com/Igor-dos-santos/opsLab/commit/302c8e56078cd025b9206261d0ffb752de5bad52).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `TrialWaitSummary` and `summarize_mean_wait`. The Python API groups complete
+paired-trial rows by staffing count and reports the trial count, arithmetic average,
+observed minimum and observed maximum of the per-trial mean waits. It preserves the
+first-seen staffing order and leaves raw rows unchanged. It requires a nonempty,
+duplicate-free, complete seed-by-agent matrix with one shared case count, finite
+nonnegative mean waits and valid identifiers. This prevents silent aggregation of
+missing, duplicated or incomparable observations.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 60 tests passed.
+- Before implementation, `python -m unittest discover -s tests -p test_summaries.py -v`
+  failed with `ImportError` because the summary type and function did not exist.
+- After implementation, all eight focused tests passed and the complete suite passed
+  68 tests. Coverage includes hand-calculated summaries, first-seen agent order,
+  unchanged generated rows, empty input, duplicate pairs, incomplete matrices,
+  inconsistent case counts, malformed values and large finite means.
+- The three-seed 100-case example produced descriptive average mean waits of
+  34.170984373131745, 7.775144386029897 and 1.1376757981918428 minutes for 2, 3 and
+  4 agents. Observed ranges were 11.12260704571623 to 63.88369229370024,
+  0.9513027012401756 to 19.756955845567838, and 0.20221891703524947 to
+  2.7904431154731766 minutes respectively.
+- `python -m compileall -q opslab tests` passed.
+
+Concepts: descriptive versus inferential statistics, complete factorial data,
+duplicate detection, equal-weight per-trial aggregation, stable group order, numeric
+overflow avoidance and validation before calculation. The observed ranges cover only
+the supplied caller-selected synthetic seeds. They are not confidence intervals,
+prediction intervals, significance tests, staffing recommendations or evidence of
+external validity. No CLI or CSV summary output was added. No CI, release or hosted
+demo is claimed, and no learner understanding is inferred.
+
+Next bounded task: add deterministic, unit-bearing CSV serialization for descriptive
+wait summaries while keeping raw rows available and inferential claims out of scope.
+Forecasting, AI/rework, costs and an interface remain later milestones.
+
 ## 2026-10-25: Atomic repeated-trial CSV command
 
 Implemented with AI assistance, preserving existing attribution.
