@@ -1,9 +1,9 @@
-"""Stable CSV serialization for OpsLab staffing comparisons and raw trials."""
+"""Stable CSV serialization for OpsLab staffing comparisons and trial results."""
 import csv
 from collections.abc import Iterable
 from io import StringIO
 
-from .scenarios import StaffingResult, TrialResult
+from .scenarios import StaffingResult, TrialResult, TrialWaitSummary
 
 
 CSV_HEADER = (
@@ -23,6 +23,14 @@ TRIAL_CSV_HEADER = (
     "maximum_wait_minutes",
     "total_service_minutes",
     "final_completion_minutes",
+)
+
+SUMMARY_CSV_HEADER = (
+    "agents",
+    "trials",
+    "average_mean_wait_minutes",
+    "minimum_mean_wait_minutes",
+    "maximum_mean_wait_minutes",
 )
 
 
@@ -69,5 +77,26 @@ def trial_results_to_csv(rows: Iterable[TrialResult]) -> str:
             result.maximum_wait,
             result.total_service_minutes,
             result.final_completion,
+        ))
+    return output.getvalue()
+
+
+def summary_results_to_csv(rows: Iterable[TrialWaitSummary]) -> str:
+    """Return descriptive wait summaries as deterministic, unit-bearing CSV.
+
+    Staffing order and Python numeric representations are preserved. Even an empty
+    iterable returns the fixed header. This function does not calculate summaries,
+    estimate uncertainty, modify rows, or write files.
+    """
+    output = StringIO(newline="")
+    writer = csv.writer(output, lineterminator="\n")
+    writer.writerow(SUMMARY_CSV_HEADER)
+    for row in rows:
+        writer.writerow((
+            row.agents,
+            row.trials,
+            row.average_mean_wait_minutes,
+            row.minimum_mean_wait_minutes,
+            row.maximum_mean_wait_minutes,
         ))
     return output.getvalue()

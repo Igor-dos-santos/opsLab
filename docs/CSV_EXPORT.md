@@ -105,3 +105,34 @@ than silently ignoring it. Inputs are fully validated and every trial completes 
 the CSV is written to standard output. Failures produce exit 2 and an explanation on
 standard error, with no partial CSV or traceback. The mode does not aggregate trials
 or compute uncertainty.
+
+## Descriptive summary CSV
+
+Validated wait summaries use a separate five-column schema:
+
+| Column | Meaning | Unit |
+| --- | --- | --- |
+| `agents` | Available parallel agents | count |
+| `trials` | Included paired seeds | count |
+| `average_mean_wait_minutes` | Arithmetic average of trial mean waits | minutes |
+| `minimum_mean_wait_minutes` | Smallest observed trial mean wait | minutes |
+| `maximum_mean_wait_minutes` | Largest observed trial mean wait | minutes |
+
+```python
+from opslab.export import summary_results_to_csv
+from opslab.scenarios import run_paired_trials, summarize_mean_wait
+
+rows = run_paired_trials([40, 41, 42], [2, 3, 4], case_count=100)
+summaries = summarize_mean_wait(rows)
+csv_text = summary_results_to_csv(summaries)
+```
+
+The serializer preserves first-seen staffing order and Python numeric
+representations, always emits the header, uses LF line endings, and does not modify
+the summary records or raw trial rows. Calculation and serialization remain separate:
+callers can retain and audit raw seed-level observations. The complete CSV is held in
+memory, and no summary CLI mode or file-writing policy is implemented.
+
+Observed minima and maxima cover only the supplied synthetic seeds. The CSV does not
+turn them into confidence bounds, prediction intervals, significance tests, staffing
+recommendations, or evidence of external validity.

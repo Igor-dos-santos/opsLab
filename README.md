@@ -70,18 +70,22 @@ then agent-count order. The function returns no partial list if a later trial fa
 It does not aggregate results or estimate uncertainty. See
 [raw paired trials](docs/PAIRED_TRIALS.md).
 
-Complete paired-trial rows can be summarized by staffing count in Python:
+Complete paired-trial rows can be summarized and serialized by staffing count in
+Python:
 ```python
+from opslab.export import summary_results_to_csv
 from opslab.scenarios import summarize_mean_wait
 
-for summary in summarize_mean_wait(rows):
-    print(summary.agents, summary.average_mean_wait_minutes)
+summaries = summarize_mean_wait(rows)
+csv_text = summary_results_to_csv(summaries)
 ```
 The function returns the arithmetic average and observed minimum/maximum of the
 per-trial mean waits. It requires a complete seed-by-agent matrix with no duplicate
 pairs and one shared case count, and preserves first-seen staffing order. These are
-descriptive statistics, not confidence intervals or staffing recommendations. Raw
-rows remain unchanged, and summary CSV or CLI output is not implemented yet.
+descriptive statistics, not confidence intervals or staffing recommendations. The
+five-column summary CSV preserves staffing order and numeric representations, uses
+explicit minute units and LF line endings, and leaves raw rows unchanged. Summary
+CLI output is not implemented yet.
 
 Raw trial rows can be serialized with their seed provenance and explicit units:
 ```python
@@ -125,7 +129,7 @@ agent count. All cases finish; there is no abandonment or shift boundary yet.
 
 ## Planned investigation
 Does AI automation still reduce cost after errors, rework, and human review?
-Next: summary serialization, uncertainty-method design, additional data validation,
+Next: summary CLI integration, uncertainty-method design, additional data validation,
 forecasting baselines, AI routing/rework, and an interactive view.
 
 ## Limitations

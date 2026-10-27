@@ -1,5 +1,47 @@
 # Progress
 
+## 2026-10-27: Deterministic descriptive-summary CSV
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [b0ae6f0be54cad0e3a88561388ee35541aed471e](https://github.com/Igor-dos-santos/opsLab/commit/b0ae6f0be54cad0e3a88561388ee35541aed471e).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `SUMMARY_CSV_HEADER` and `summary_results_to_csv`. The Python serializer
+emits a fixed five-column schema for staffing count, trial count, average mean wait,
+observed minimum mean wait and observed maximum mean wait. Minute-bearing names make
+units explicit. It preserves first-seen staffing order and Python numeric
+representations, includes the header for empty input, uses LF line endings, and
+leaves summary and raw trial records unchanged. Summary calculation stays separate
+from presentation so callers can retain auditable seed-level observations.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 68 tests passed.
+- Before implementation, `python -m unittest discover -s tests -p
+  test_summary_export.py -v` failed with `ImportError` because the summary CSV
+  header and serializer did not exist.
+- After implementation, all five focused tests passed and the complete suite passed
+  73 tests. Coverage includes the exact schema and values, preserved staffing order
+  and numeric representations, empty input, LF line endings and unchanged records.
+- A three-seed 100-case example emitted deterministic rows for 2, 3 and 4 agents,
+  preserving average mean waits of 34.170984373131745, 7.775144386029897 and
+  1.1376757981918428 minutes and their documented observed ranges.
+- `python -m compileall -q opslab tests` passed.
+
+Concepts: stable schemas, explicit units, deterministic serialization, separation of
+calculation from presentation, provenance retention, order preservation and
+regression testing. The serializer accepts already validated summary records; it does
+not recalculate or independently validate them. It holds the complete CSV in memory
+and performs no external write. Observed ranges remain descriptive only, not
+confidence or prediction intervals, hypothesis tests, staffing recommendations or
+evidence of external validity. No CLI mode, CI, release or hosted demo is claimed,
+and no learner understanding is inferred.
+
+Next bounded task: add an explicit summary CSV CLI mode that reuses the validated
+aggregation and serializer, preserves atomic standard output, and remains mutually
+exclusive with existing modes. Uncertainty methods, forecasting, AI/rework, costs
+and an interface remain later milestones.
+
 ## 2026-10-26: Validated descriptive wait summaries
 
 Implemented with AI assistance, preserving existing attribution.
