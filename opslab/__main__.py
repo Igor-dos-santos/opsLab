@@ -2,8 +2,16 @@ import argparse
 from dataclasses import asdict
 import json
 
-from .export import staffing_results_to_csv, trial_results_to_csv
-from .scenarios import compare_staffing, run_paired_trials
+from .export import (
+    staffing_results_to_csv,
+    summary_results_to_csv,
+    trial_results_to_csv,
+)
+from .scenarios import (
+    compare_staffing,
+    run_paired_trials,
+    summarize_mean_wait,
+)
 from .simulation import generate_cases, simulate
 
 
@@ -17,30 +25,46 @@ def main():
                       help="compare agent counts on the same workload and emit CSV")
     mode.add_argument("--trial-seeds", type=int, nargs="+", metavar="N",
                       help="run paired workloads for these seeds and emit CSV")
+    mode.add_argument(
+        "--summary-seeds", type=int, nargs="+", metavar="N",
+        help="run paired workloads for these seeds and emit descriptive summary CSV",
+    )
     parser.add_argument("--trial-agents", type=int, nargs="+", metavar="N",
-                        help="agent counts for --trial-seeds paired comparisons")
+                        help="agent counts for paired trial or summary modes")
     parser.add_argument("--seed", type=int)
     parser.add_argument("--mean-interarrival", type=float, default=2.0,
                         help="mean gap between arrivals in minutes (default: 2)")
     parser.add_argument("--mean-service", type=float, default=5.0,
                         help="mean service duration in minutes (default: 5)")
     args = parser.parse_args()
-    if args.trial_seeds is None and args.trial_agents is not None:
-        parser.error("--trial-agents requires --trial-seeds")
+    paired_seeds = (
+        args.trial_seeds
+        if args.trial_seeds is not None
+        else args.summary_seeds
+    )
+    if paired_seeds is None and args.trial_agents is not None:
+        parser.error("--trial-agents requires --trial-seeds or --summary-seeds")
     if args.trial_seeds is not None and args.trial_agents is None:
         parser.error("--trial-seeds requires --trial-agents")
+    if args.summary_seeds is not None and args.trial_agents is None:
+        parser.error("--summary-seeds requires --trial-agents")
     if args.trial_seeds is not None and args.seed is not None:
         parser.error("--seed cannot be used with --trial-seeds")
+    if args.summary_seeds is not None and args.seed is not None:
+        parser.error("--seed cannot be used with --summary-seeds")
     try:
-        if args.trial_seeds is not None:
+        if paired_seeds is not None:
             rows = run_paired_trials(
-                args.trial_seeds,
+                paired_seeds,
                 args.trial_agents,
                 case_count=args.cases,
                 mean_interarrival=args.mean_interarrival,
                 mean_service=args.mean_service,
             )
-            output = trial_results_to_csv(rows)
+            if args.summary_seeds is None:
+                output = trial_results_to_csv(rows)
+            else:
+                output = summary_results_to_csv(summarize_mean_wait(rows))
         else:
             cases = generate_cases(
                 args.cases,

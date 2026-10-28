@@ -72,6 +72,13 @@ for summary in summaries:
           summary.maximum_mean_wait_minutes)
 ```
 
+The command line can run the complete paired experiment and emit only the descriptive
+summary:
+
+```sh
+python -m opslab --cases 100 --summary-seeds 40 41 42 --trial-agents 2 3 4
+```
+
 The arithmetic average gives equal weight to each seed's mean wait. The input must
 form a complete seed-by-agent matrix, contain no duplicate seed-agent pair, and use
 one case count throughout. Summary order follows the first occurrence of each agent
@@ -81,7 +88,7 @@ a representable average is not lost to an overflowing intermediate total.
 
 Observed minima and maxima describe only the supplied synthetic seeds. They are not
 confidence bounds, prediction intervals, hypothesis tests, or evidence of optimal
-staffing. The function adds no CSV or CLI summary mode and does not modify raw rows.
+staffing. The summary mode does not modify or print the raw rows.
 
 ## Contract
 
@@ -99,6 +106,9 @@ staffing. The function adds no CSV or CLI summary mode and does not modify raw r
 - CLI trial options must be supplied together. Trial mode rejects the single-workload
   `--seed` option and is mutually exclusive with JSON and one-workload comparison
   modes. Failures use exit 2 and standard error without writing partial CSV.
+- `--summary-seeds` is mutually exclusive with the raw-trial and existing output
+  modes, requires `--trial-agents`, rejects `--seed`, and preserves the requested
+  staffing order. Summary failures also write no partial CSV.
 
 ## Interpretation and limits
 

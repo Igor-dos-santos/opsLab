@@ -15,6 +15,7 @@ python -m opslab --cases 100 --agents 3 --seed 42
 python -m opslab --cases 100 --agents 3 --seed 42 --mean-interarrival 4 --mean-service 7
 python -m opslab --cases 100 --seed 42 --compare-agents 2 3 4
 python -m opslab --cases 100 --trial-seeds 40 41 42 --trial-agents 2 3 4
+python -m opslab --cases 100 --summary-seeds 40 41 42 --trial-agents 2 3 4
 python -m unittest discover -s tests -v
 ```
 
@@ -84,8 +85,11 @@ per-trial mean waits. It requires a complete seed-by-agent matrix with no duplic
 pairs and one shared case count, and preserves first-seen staffing order. These are
 descriptive statistics, not confidence intervals or staffing recommendations. The
 five-column summary CSV preserves staffing order and numeric representations, uses
-explicit minute units and LF line endings, and leaves raw rows unchanged. Summary
-CLI output is not implemented yet.
+explicit minute units and LF line endings, and leaves raw rows unchanged.
+`--summary-seeds N [N ...]` exposes the same pipeline from the command line when
+paired with `--trial-agents`. It is mutually exclusive with the existing JSON,
+single-workload comparison and raw-trial modes. All work completes before output is
+written, so failures produce exit 2 without partial CSV or a traceback.
 
 Raw trial rows can be serialized with their seed provenance and explicit units:
 ```python
@@ -129,8 +133,8 @@ agent count. All cases finish; there is no abandonment or shift boundary yet.
 
 ## Planned investigation
 Does AI automation still reduce cost after errors, rework, and human review?
-Next: summary CLI integration, uncertainty-method design, additional data validation,
-forecasting baselines, AI routing/rework, and an interactive view.
+Next: explicit experiment-size limits, uncertainty-method design, additional data
+validation, forecasting baselines, AI routing/rework, and an interactive view.
 
 ## Limitations
 Independent exponential arrivals and service times do not represent a validated

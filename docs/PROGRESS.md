@@ -1,5 +1,52 @@
 # Progress
 
+## 2026-10-28: Atomic descriptive-summary CSV command
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [1cb1782cd5d72707984daf5404019cbd882fd3c0](https://github.com/Igor-dos-santos/opsLab/commit/1cb1782cd5d72707984daf5404019cbd882fd3c0).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added the explicit `--summary-seeds N [N ...]` mode. With the required
+`--trial-agents N [N ...]`, the command reuses `run_paired_trials`, validates and
+aggregates the complete seed-by-agent matrix with `summarize_mean_wait`, serializes
+the summaries with `summary_results_to_csv`, and writes only the completed
+five-column CSV. The mode is argparse-mutually-exclusive with single-scenario JSON,
+one-workload comparison CSV and raw paired-trial CSV. It rejects the single-workload
+`--seed` option instead of silently ignoring it.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 73 tests passed.
+- Before implementation, `python -m unittest discover -s tests -p
+  test_summary_cli.py -v` ran seven new tests and failed because
+  `--summary-seeds` and the CLI summary import did not exist. The focused run
+  reported the expected unrecognized-argument failures plus one missing-symbol mock
+  error.
+- After implementation, all seven focused tests passed and the complete suite passed
+  80 tests. Coverage includes exact CSV and staffing order with custom workload
+  means, mode exclusivity, paired-option requirements, rejection of ambiguous
+  `--seed`, invalid lists, a late aggregation failure with empty standard output,
+  and help text.
+- `python -m opslab --cases 100 --summary-seeds 40 41 42 --trial-agents
+  2 3 4` exited 0 with one header and three deterministic rows. Average mean waits
+  remained 34.170984373131745, 7.775144386029897 and 1.1376757981918428 minutes for
+  2, 3 and 4 agents.
+- `python -m compileall -q opslab tests` passed.
+
+Concepts: explicit CLI modes, orchestration through existing domain APIs, mutual
+exclusion, paired arguments, ambiguity rejection, deterministic serialization,
+failure atomicity and regression testing. All simulations, aggregation and
+serialization complete before standard output is written. Results and the complete
+CSV remain in memory, and the command has no explicit experiment-size cap. Observed
+ranges are descriptive only, not confidence intervals, prediction intervals,
+hypothesis tests, staffing recommendations or evidence of external validity. No CI,
+release or hosted demo is claimed, and no learner understanding is inferred.
+
+Next bounded task: add an explicit experiment-size budget for paired CLI modes,
+validated before workload generation, with boundary and no-partial-output tests.
+Uncertainty methods, forecasting, AI/rework, costs and an interface remain later
+milestones.
+
 ## 2026-10-27: Deterministic descriptive-summary CSV
 
 Implemented with AI assistance, preserving existing attribution.

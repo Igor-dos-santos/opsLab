@@ -131,7 +131,21 @@ The serializer preserves first-seen staffing order and Python numeric
 representations, always emits the header, uses LF line endings, and does not modify
 the summary records or raw trial rows. Calculation and serialization remain separate:
 callers can retain and audit raw seed-level observations. The complete CSV is held in
-memory, and no summary CLI mode or file-writing policy is implemented.
+memory, and no file-writing policy is implemented.
+
+The summary pipeline is also available from the command line:
+
+```sh
+python -m opslab --cases 100 --summary-seeds 40 41 42 --trial-agents 2 3 4
+python -m opslab --cases 100 --summary-seeds 40 41 42 --trial-agents 2 3 4 > wait_summary.csv
+```
+
+`--summary-seeds` is a distinct output mode and is mutually exclusive with
+`--agents`, `--compare-agents` and `--trial-seeds`. It requires
+`--trial-agents` and rejects the single-workload `--seed` option. Workload
+generation, simulation, matrix validation, aggregation and serialization all finish
+before the complete CSV is written to standard output. Any failure produces exit 2
+and an explanation on standard error, with no partial CSV or traceback.
 
 Observed minima and maxima cover only the supplied synthetic seeds. The CSV does not
 turn them into confidence bounds, prediction intervals, significance tests, staffing
