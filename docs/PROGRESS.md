@@ -1,5 +1,46 @@
 # Progress
 
+## 2026-10-29: Pre-generation paired-experiment budgets
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [6e5006a602b45c31e263edf59ad66295a279d43e](https://github.com/Igor-dos-santos/opsLab/commit/6e5006a602b45c31e263edf59ad66295a279d43e).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added two fixed availability guards to the raw paired-trial and descriptive-summary
+CLI modes. A command may request at most 1,000,000 case-runs, calculated as cases
+times seeds times staffing counts, and at most 10,000 result rows, calculated as
+seeds times staffing counts. Both checks run before `run_paired_trials`, so an
+oversized experiment generates no synthetic workload, writes no partial CSV, exits
+2 with a useful argument error, and produces no traceback. The Python API remains
+uncapped so callers can apply a budget appropriate to their environment.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 80 tests passed.
+- Before implementation, `python -m unittest discover -s tests -p
+  test_experiment_budget_cli.py -v` ran four new tests: three failed because no
+  budget or help text existed; the exact-boundary engine test passed because it
+  intentionally verifies the existing dispatch path.
+- After implementation, all four focused tests passed and the complete suite passed
+  84 tests. Coverage includes raw-mode case-run rejection, summary-mode result-row
+  rejection, no trial-engine call or partial output on rejection, acceptance at the
+  exact 1,000,000 case-run boundary, exit code 2, no traceback, and help text.
+- `python -m compileall -q opslab tests` and `git diff --check` passed before
+  publication.
+
+Concepts: availability budgets, derived-size validation, boundary testing,
+validation before side effects, distinct CPU and memory proxies, and failure
+atomicity. The thresholds are conservative policy values, not measured capacity,
+performance guarantees, or evidence that allowed experiments are safe on every
+machine. Case-runs approximate simulation work and result rows approximate retained
+records; neither models every allocation or sort cost. No CI, release, pull request
+or hosted demo is claimed, and no learner understanding is inferred.
+
+Next bounded task: design and document an uncertainty method appropriate for paired
+synthetic trials before implementing any interval, while preserving raw provenance
+and avoiding staffing-recommendation claims. Forecasting, AI/rework, costs and an
+interface remain later milestones.
+
 ## 2026-10-28: Atomic descriptive-summary CSV command
 
 Implemented with AI assistance, preserving existing attribution.

@@ -15,8 +15,34 @@ from .scenarios import (
 from .simulation import generate_cases, simulate
 
 
+MAX_PAIRED_CASE_RUNS = 1_000_000
+MAX_PAIRED_RESULT_ROWS = 10_000
+
+
+def _validate_paired_experiment_budget(case_count, seeds, agent_counts):
+    """Reject oversized paired CLI work before workload generation."""
+    result_rows = len(seeds) * len(agent_counts)
+    if result_rows > MAX_PAIRED_RESULT_ROWS:
+        raise ValueError(
+            "paired experiment budget allows at most "
+            f"{MAX_PAIRED_RESULT_ROWS} result rows; requested {result_rows}"
+        )
+    case_runs = case_count * result_rows
+    if case_runs > MAX_PAIRED_CASE_RUNS:
+        raise ValueError(
+            "paired experiment budget allows at most "
+            f"{MAX_PAIRED_CASE_RUNS} case-runs; requested {case_runs}"
+        )
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Simulate synthetic support cases")
+    parser = argparse.ArgumentParser(
+        description="Simulate synthetic support cases",
+        epilog=(
+            "Paired CLI modes allow at most 1000000 case-runs and "
+            "10000 result rows per command."
+        ),
+    )
     parser.add_argument("--cases", type=int, default=100)
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--agents", type=int, default=3,
@@ -54,6 +80,9 @@ def main():
         parser.error("--seed cannot be used with --summary-seeds")
     try:
         if paired_seeds is not None:
+            _validate_paired_experiment_budget(
+                args.cases, paired_seeds, args.trial_agents,
+            )
             rows = run_paired_trials(
                 paired_seeds,
                 args.trial_agents,

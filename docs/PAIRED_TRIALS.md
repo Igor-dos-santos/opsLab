@@ -103,6 +103,10 @@ staffing. The summary mode does not modify or print the raw rows.
 - Descriptive summaries require exactly one row for every seed and staffing count,
   with the same number of cases in every row.
 - The API, CLI and serializer hold raw results and the complete CSV string in memory.
+- Raw and summary CLI modes allow at most 1,000,000 case-runs and 10,000 result
+  rows per invocation. Limits are checked before `run_paired_trials`, so rejected
+  experiments generate no workload and write no partial CSV. The Python API remains
+  uncapped so library callers can choose and enforce a context-specific budget.
 - CLI trial options must be supplied together. Trial mode rejects the single-workload
   `--seed` option and is mutually exclusive with JSON and one-workload comparison
   modes. Failures use exit 2 and standard error without writing partial CSV.
@@ -122,3 +126,7 @@ operations. The synthetic arrival and service assumptions remain uncalibrated. N
 confidence interval, hypothesis test, multiple-comparison correction, cost model,
 quality model, abandonment behavior, or AI/rework behavior is implemented. Do not use
 these rows as a production staffing recommendation.
+
+The CLI limits are conservative availability guards, not measured capacity claims.
+Allowed experiments can still be slow or memory-intensive on constrained hardware,
+and the in-process Python API does not apply these command-line limits.

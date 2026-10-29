@@ -11,8 +11,8 @@
    added 2026-10-23; raw-trial CSV serialization added 2026-10-24; atomic repeated-
    trial CLI integration added 2026-10-25; validated descriptive wait summaries
    added 2026-10-26; deterministic summary CSV serialization added 2026-10-27;
-   atomic summary CLI integration added 2026-10-28; explicit experiment-size limits
-   remain).
+   atomic summary CLI integration added 2026-10-28; pre-generation CLI case-run and
+   result-row budgets added 2026-10-29).
 5. Forecasting baseline, chronological evaluation, and leakage checks.
 6. AI routing, error/rework assumptions, human-review capacity.
 7. Repeated experiments and uncertainty intervals (raw seed-by-staffing trial rows

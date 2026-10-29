@@ -90,6 +90,11 @@ explicit minute units and LF line endings, and leaves raw rows unchanged.
 paired with `--trial-agents`. It is mutually exclusive with the existing JSON,
 single-workload comparison and raw-trial modes. All work completes before output is
 written, so failures produce exit 2 without partial CSV or a traceback.
+Both paired CLI modes reject experiments above 1,000,000 case-runs or 10,000 result
+rows before generating a workload. A case-run is one case simulated for one
+seed-agent pair; a result row is one seed-agent pair. These fixed safety limits bound
+CPU work and accumulated output records, but they are not a benchmark or a promise
+that every allowed experiment will meet a particular runtime or memory target.
 
 Raw trial rows can be serialized with their seed provenance and explicit units:
 ```python
@@ -133,8 +138,8 @@ agent count. All cases finish; there is no abandonment or shift boundary yet.
 
 ## Planned investigation
 Does AI automation still reduce cost after errors, rework, and human review?
-Next: explicit experiment-size limits, uncertainty-method design, additional data
-validation, forecasting baselines, AI routing/rework, and an interactive view.
+Next: uncertainty-method design, additional data validation, forecasting baselines,
+AI routing/rework, and an interactive view.
 
 ## Limitations
 Independent exponential arrivals and service times do not represent a validated
