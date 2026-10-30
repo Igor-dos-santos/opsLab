@@ -27,6 +27,16 @@ class TrialWaitSummary:
     maximum_mean_wait_minutes: float
 
 
+@dataclass(frozen=True)
+class PairedMeanWaitDifference:
+    seed: int
+    baseline_agents: int
+    comparison_agents: int
+    baseline_mean_wait_minutes: float
+    comparison_mean_wait_minutes: float
+    comparison_minus_baseline_minutes: float
+
+
 def _validate_agent_counts(agent_counts: list[int]) -> None:
     """Validate a complete staffing plan before any simulation starts."""
     if not isinstance(agent_counts, list) or not agent_counts:
@@ -155,3 +165,38 @@ def summarize_mean_wait(rows: list[TrialResult]) -> list[TrialWaitSummary]:
             max(values),
         ))
     return summaries
+
+
+def paired_mean_wait_differences(
+        rows: list[TrialResult], *, baseline_agents: int,
+        comparison_agents: int) -> list[PairedMeanWaitDifference]:
+    """Return one comparison-minus-baseline mean-wait difference per seed.
+
+    The complete paired matrix is validated before subtraction. Negative values
+    mean the comparison staffing count had a lower mean wait for that synthetic
+    seed. This function preserves seed order and performs no aggregation,
+    uncertainty estimate, hypothesis test, optimization, or recommendation.
+    """
+    _validate_agent_counts([baseline_agents, comparison_agents])
+    summaries = summarize_mean_wait(rows)
+    available_agents = {summary.agents for summary in summaries}
+    if not {baseline_agents, comparison_agents} <= available_agents:
+        raise ValueError("requested agents must exist in the paired trial rows")
+
+    values_by_seed = {}
+    for row in rows:
+        values_by_seed.setdefault(row.seed, {})[row.agents] = row.result.mean_wait
+
+    differences = []
+    for seed, values in values_by_seed.items():
+        baseline = values[baseline_agents]
+        comparison = values[comparison_agents]
+        differences.append(PairedMeanWaitDifference(
+            seed,
+            baseline_agents,
+            comparison_agents,
+            baseline,
+            comparison,
+            comparison - baseline,
+        ))
+    return differences

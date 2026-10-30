@@ -17,8 +17,9 @@
 6. AI routing, error/rework assumptions, human-review capacity.
 7. Repeated experiments and uncertainty intervals (raw seed-by-staffing trial rows
    plus deterministic API and CLI CSV serialization, descriptive wait aggregation
-   and deterministic summary CSV serialization implemented; interval method and
-   interpretation remain).
+   and deterministic summary CSV serialization implemented; validated per-seed
+   paired differences and a paired Student t method design added 2026-10-30;
+   descriptive difference aggregation and interval implementation remain).
 8. Interface, reproducible demo, benchmark, and limitations.
 
 Start simply. Add FastAPI/PostgreSQL/TypeScript only when needed by an accepted task.

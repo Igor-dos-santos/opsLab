@@ -96,6 +96,21 @@ seed-agent pair; a result row is one seed-agent pair. These fixed safety limits 
 CPU work and accumulated output records, but they are not a benchmark or a promise
 that every allowed experiment will meet a particular runtime or memory target.
 
+Python callers can also retain one signed mean-wait difference per seed for a chosen
+baseline and comparison:
+```python
+from opslab.scenarios import paired_mean_wait_differences
+
+differences = paired_mean_wait_differences(
+    rows, baseline_agents=2, comparison_agents=4,
+)
+```
+Each record contains both observed means and `comparison_minus_baseline_minutes`.
+Negative values mean lower mean wait for the comparison within that synthetic seed.
+The complete paired matrix is validated first. This API performs no aggregation,
+uncertainty interval, hypothesis test, optimization or recommendation. See the
+[paired uncertainty method design](docs/UNCERTAINTY_METHOD.md).
+
 Raw trial rows can be serialized with their seed provenance and explicit units:
 ```python
 from opslab.export import trial_results_to_csv
@@ -138,8 +153,9 @@ agent count. All cases finish; there is no abandonment or shift boundary yet.
 
 ## Planned investigation
 Does AI automation still reduce cost after errors, rework, and human review?
-Next: uncertainty-method design, additional data validation, forecasting baselines,
-AI routing/rework, and an interactive view.
+Next: descriptive paired-difference aggregation, the documented uncertainty method,
+additional data validation, forecasting baselines, AI routing/rework, and an
+interactive view.
 
 ## Limitations
 Independent exponential arrivals and service times do not represent a validated

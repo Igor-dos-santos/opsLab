@@ -1,5 +1,53 @@
 # Progress
 
+## 2026-10-30: Validated per-seed mean-wait differences
+
+Implemented with AI assistance, preserving existing attribution.
+Base: [e5159aa45ab7ebba2b07dcb6cea8178722835233](https://github.com/Igor-dos-santos/opsLab/commit/e5159aa45ab7ebba2b07dcb6cea8178722835233).
+This increment's commit is available in
+[file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `PairedMeanWaitDifference` and `paired_mean_wait_differences`. The API selects
+two staffing counts from a complete paired-trial matrix and returns one signed record
+per seed containing both observed means and comparison minus baseline. Negative
+values mean the comparison had a lower mean wait for that synthetic seed. It reuses
+the existing complete-matrix validation, preserves first-seen seed order, leaves raw
+rows unchanged and performs no aggregation or inferential calculation.
+
+Added `docs/UNCERTAINTY_METHOD.md` to define the future estimand before implementing
+an interval. The selected first method is a two-sided 95 percent Student t interval
+over per-seed paired differences. The design documents assumptions, sign convention,
+minimum data requirements, rejected alternatives, future test gates and strict
+simulator-only interpretation. No interval, p-value, optimization or staffing
+recommendation is implemented or claimed in this increment.
+
+Local evidence from the project root:
+- `python -m unittest discover -s tests -v`: baseline 84 tests passed.
+- Before implementation, focused discovery of `test_paired_differences.py` failed
+  with `ImportError` because the new record and function did not exist.
+- After implementation, all six focused tests passed and the complete suite passed
+  90 tests. Coverage includes hand-calculated sign and values, first-seen seed order,
+  direct generated-row equivalence, invalid or identical staffing identifiers,
+  missing requested counts, incomplete matrices and unchanged inputs.
+- The documented three-seed example produced comparison-minus-baseline differences
+  of -27.086288417911653, -61.09324917822707 and -10.92038812868098 minutes for
+  4 agents versus a 2-agent baseline.
+- `python -m compileall -q opslab tests` and `git diff --check` passed before
+  publication.
+
+Concepts: paired contrasts, explicit estimands, sign conventions, validation reuse,
+raw provenance, separation of descriptive transformations from inference and design
+before implementation. Distinct pseudorandom seeds are simulator draws, not sampled
+real operations. The proposed interval will quantify Monte Carlo variation under the
+synthetic generator only; it cannot address model misspecification or external
+validity. No CI, release, pull request or hosted demo is claimed, and no learner
+understanding is inferred.
+
+Next bounded task: add a validated descriptive summary of the paired differences,
+including count, mean, sample standard deviation and standard error, without yet
+publishing interval bounds. Forecasting, AI/rework, costs and an interface remain
+later milestones.
+
 ## 2026-10-29: Pre-generation paired-experiment budgets
 
 Implemented with AI assistance, preserving existing attribution.

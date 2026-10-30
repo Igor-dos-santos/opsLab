@@ -90,6 +90,21 @@ Observed minima and maxima describe only the supplied synthetic seeds. They are 
 confidence bounds, prediction intervals, hypothesis tests, or evidence of optimal
 staffing. The summary mode does not modify or print the raw rows.
 
+## Per-seed paired differences
+
+`paired_mean_wait_differences` selects two staffing counts from a complete validated
+trial matrix and returns one record per seed. Each record retains the baseline and
+comparison means and calculates comparison minus baseline. Negative values therefore
+mean the comparison had a lower mean wait for that synthetic workload. Seed order is
+preserved and input rows are not changed.
+
+The function validates distinct positive staffing identifiers, the complete paired
+matrix, consistent case counts, finite nonnegative means and the presence of both
+requested staffing counts before subtraction. It does not average the differences or
+produce an uncertainty interval, hypothesis test or recommendation. See
+[the uncertainty method design](UNCERTAINTY_METHOD.md) for the selected future
+paired interval and its limits.
+
 ## Contract
 
 - `seeds` and `agent_counts` are nonempty lists of unique integers; booleans are
@@ -102,6 +117,8 @@ staffing. The summary mode does not modify or print the raw rows.
   partial result list.
 - Descriptive summaries require exactly one row for every seed and staffing count,
   with the same number of cases in every row.
+- Paired differences also require a complete matrix and two distinct staffing counts
+  present in it. Their sign is always comparison minus baseline.
 - The API, CLI and serializer hold raw results and the complete CSV string in memory.
 - Raw and summary CLI modes allow at most 1,000,000 case-runs and 10,000 result
   rows per invocation. Limits are checked before `run_paired_trials`, so rejected
