@@ -1,13 +1,25 @@
 # OpsLab
 
-A learning-oriented simulator for the operational cost of human and AI work.
+A learning-oriented synthetic staffing simulator with a local browser interface.
 
 ## Current status
 Current increment: a reproducible human-only queue simulation, configurable workload
 means, controlled staffing comparisons, raw repeated paired trials, CSV serialization,
-command-line interface, and tests. No AI model, forecast, web app, cloud deployment,
+command-line and local browser interfaces, and tests. No AI model, forecast, cloud deployment,
 or production claims yet. All generated cases are synthetic. Initial parameters are
 illustrative, not calibrated.
+
+## Local browser interface
+
+From the extracted repository folder, run `python -m opslab.web` and open
+`http://127.0.0.1:8000`. On macOS try `python3`; on Windows try `py` if needed.
+No package installation is required. Use `--port 8001` if port 8000 is occupied.
+Stop with Ctrl+C. This is local software, not a hosted demo.
+
+Enter case count, worker counts, seeds and average durations. Select **Compare
+staffing** for a table and bar chart, then download summary or raw-trial CSV.
+See [the local interface guide](docs/LOCAL_INTERFACE.md) for setup, an example,
+limits and troubleshooting.
 
 ## Run (Python 3.10+; no third-party dependencies)
 ```sh
@@ -153,9 +165,9 @@ agent count. All cases finish; there is no abandonment or shift boundary yet.
 
 ## Planned investigation
 Does AI automation still reduce cost after errors, rework, and human review?
-Next: descriptive paired-difference aggregation, the documented uncertainty method,
-additional data validation, forecasting baselines, AI routing/rework, and an
-interactive view.
+The first release focuses on usable synthetic staffing comparisons. Next: complete
+the five-minute demo and release verification. Forecasting, AI routing/rework, costs
+and inferential intervals are deferred; existing calculations remain available.
 
 ## Limitations
 Independent exponential arrivals and service times do not represent a validated

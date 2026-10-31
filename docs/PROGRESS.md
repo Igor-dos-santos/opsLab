@@ -1,5 +1,40 @@
 # Progress
 
+## 2026-10-31: Usable local staffing explorer
+
+Implemented with AI assistance. Base commit:
+[4660c5df508a3e7fa4e496ccd44cfc7359a4ce68](https://github.com/Igor-dos-santos/opsLab/commit/4660c5df508a3e7fa4e496ccd44cfc7359a4ce68).
+This increment is discoverable in [file history](https://github.com/Igor-dos-santos/opsLab/commits/main/docs/PROGRESS.md).
+
+Added `python -m opslab.web`: a standard-library loopback server with a labeled
+form, descriptive comparison table and bar chart, and integrated raw/summary CSV.
+It reuses the existing paired engine and serializers. Added pre-generation request
+and worker bounds, HTML escaping, fixed routes, Host checking, security headers and
+atomic responses. Existing API and CLI remain unchanged. Aligned README and ROADMAP
+with the focused v1 scope and added a local setup/example/troubleshooting guide.
+
+Evidence:
+- `python -m unittest discover -s tests -v`: all 100 tests passed (90 existing,
+  10 new). Includes live loopback HTTP tests, matching CSV/engine values, unsafe and
+  oversized input rejection before engine calls, exact budget acceptance, escaped
+  errors, no partial CSV, unknown routes, zero-wait chart and Host rejection.
+- `python -m compileall -q opslab tests`: passed.
+- `git diff --check`: passed.
+- Browser screenshot and accessibility inspection of a generated three-seed results
+  page verified readable form labels, chart, table, units and download links.
+  The managed preview serves a rendered snapshot; live form submission/download
+  interaction in a browser was not verified. HTTP behavior was tested separately.
+- No failing product check remains. Initial clone destination was occupied by an
+  old non-Git bootstrap; used a separate fresh clone, leaving bootstrap untouched.
+
+Concepts: server-rendered forms, input boundaries, deterministic exports, HTML
+escaping, resource availability, reuse of domain logic, and local-only services.
+No dependencies, private data, paid infrastructure, CI, release or hosted demo added.
+The local HTTP server is not production hosting. No learner understanding inferred.
+Next: integrated five-minute demo, live-browser interaction/narrow-screen checks,
+and release acceptance verification. Forecasting, AI/cost and intervals are deferred.
+
+
 ## 2026-10-30: Validated per-seed mean-wait differences
 
 Implemented with AI assistance, preserving existing attribution.

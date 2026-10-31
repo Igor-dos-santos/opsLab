@@ -1,32 +1,50 @@
-# Release scope and learning gates
+# OpsLab v1: focused synthetic staffing simulator
 
-1. Queue mechanics and hand-calculated tests (initial increment).
-2. Configurable workload generation and validation (implemented 2026-10-18;
-   simulation overflow guards and boundary/invariant tests added 2026-10-19;
-   same-workload comparison API and experiment added 2026-10-20).
-3. CSV export and operational metrics with explicit units (Python serializer and
-   fixed schema implemented 2026-10-21; CLI integration added 2026-10-22).
-4. Compare staffing scenarios using the same generated workload (Python API and
-   single-seed example implemented; CSV CLI added; raw repeated paired-trial API
-   added 2026-10-23; raw-trial CSV serialization added 2026-10-24; atomic repeated-
-   trial CLI integration added 2026-10-25; validated descriptive wait summaries
-   added 2026-10-26; deterministic summary CSV serialization added 2026-10-27;
-   atomic summary CLI integration added 2026-10-28; pre-generation CLI case-run and
-   result-row budgets added 2026-10-29).
-5. Forecasting baseline, chronological evaluation, and leakage checks.
-6. AI routing, error/rework assumptions, human-review capacity.
-7. Repeated experiments and uncertainty intervals (raw seed-by-staffing trial rows
-   plus deterministic API and CLI CSV serialization, descriptive wait aggregation
-   and deterministic summary CSV serialization implemented; validated per-seed
-   paired differences and a paired Student t method design added 2026-10-30;
-   descriptive difference aggregation and interval implementation remain).
-8. Interface, reproducible demo, benchmark, and limitations.
+This scope supersedes the earlier broader roadmap as of 2026-10-30.
+Deliver coherent usable features with implementation, integration, tests and docs
+in one focused run. Do not split layers across days or add statistical scope.
 
-Start simply. Add FastAPI/PostgreSQL/TypeScript only when needed by an accepted task.
-Do not complete the project in one run. Each scheduled run delivers one bounded slice.
-Before proceeding to EvalGate: verify agreed engineering acceptance criteria and
-obtain actual evidence of learner understanding. Never infer understanding from
-sent emails. Scope reductions take priority over rushing ahead.
+## Outcome milestones
 
-Next projects: EvalGate, CaseFlow, IncidentLab, CostPilot, one active at a time.
-Christmas target: December 24, 2026; feature freeze December 18.
+1. **Usable local interface:** implemented 2026-10-31. Inputs, same-workload
+   comparisons, repeated-trial descriptive table/chart, raw and summary CSV,
+   explicit minute units, validation and local setup. Existing CLI/API preserved.
+2. **Integrated demonstration and verification:** next. Complete a timed five-minute
+   worked demonstration and plain-English case trace; verify live browser form,
+   errors and downloads, narrow-screen usability, and reproducible clean setup.
+   Current checks cover HTTP behavior and visual rendering separately, not a full
+   interactive browser session against the live Python server.
+3. **Release documentation and checks:** verify acceptance below, finalize release
+   notes and publish an actual versioned release only when checks pass.
+
+These are outcome milestones, not promised dates or run counts. Work incrementally
+through December 24, 2026; do not rush gates to meet a calendar target.
+
+## Engineering acceptance
+
+- Existing queue simulation, fair comparisons, repeated summaries and CSV work.
+- A local user can enter assumptions, inspect table/chart and export matching data.
+- Clean Python 3.10+ setup is documented; meaningful tests pass.
+- A five-minute worked demo explains data flow and one case's wait calculation.
+- Limits, synthetic assumptions and AI-assisted development are explicit.
+- Actual release checks and results are recorded. No hosted demo is required or
+  claimed without deployment evidence.
+
+## Learning gate
+
+After engineering completion, hold for actual evidence: explain data flow, trace
+code, make a change and diagnose a bug. Never infer understanding from delivery or
+add features simply to fill time while waiting.
+
+## Deferred backlog
+
+Forecasting, AI routing/rework, quality/cost models and inferential uncertainty
+intervals. Existing paired differences and method design are preserved but do not
+expand v1. CaseFlow, IncidentLab and CostPilot are backlog, not an automatic sequence.
+
+## Proposed next project
+
+EvalGate AI-security lab: synthetic prompt-injection, customer-data access and tool
+permission tests, deterministic controls, baseline comparisons and honest failures.
+Do not create a repository until scope and designated repository are settled, and
+both OpsLab engineering and learner gates are met.
